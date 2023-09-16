@@ -1,0 +1,18 @@
+website:
+  urls: https://ikman.lk/en/ads/sri-lanka/vehicles?sort=relevance&buy_now=0&urgent=0&query=,https://riyasewana.com/search/
+
+spring:
+#  liquibase:
+#    change-log=db/changelog/changelog.yml
+  datasource:
+    url: jdbc:clickhouse://localhost:8123/database
+    username: andimus
+    password: root
+    driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+
+
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: create
+    database-platform: com.clickhouse.jdbc.ClickHouseDriver
+    open-in-view: false
