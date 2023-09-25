@@ -1,0 +1,14 @@
+@import "normalize.css";
+* {
+  box-sizing: border-box;
+}
+:root {
+  --red: #B46060;
+  --black: #4D4D4D;
+  --brown: #FFBF9B;
+  --white: #FFF4E0;
+}
+body {
+  color: var(--black);
+  font-family: sans-serif;
+}
