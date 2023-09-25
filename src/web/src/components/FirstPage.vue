@@ -36,7 +36,6 @@ function logPage() {
 <style scoped>
 .container {
   min-height: 100vh;
-  max-width: 1500px;
   display: flex;
   flex-direction: column;
 }
