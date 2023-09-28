@@ -1,5 +1,6 @@
 website:
-  urls: https://ikman.lk/en/ads/sri-lanka/vehicles?sort=relevance&buy_now=0&urgent=0&query=,https://riyasewana.com/search/
+  urls: https://ikman.lk/en/ads/sri-lanka/vehicles?sort=relevance&buy_now=0&urgent=0&query=,https://riyasewana.com/search/,https://autobid.de/?action=cars&auction=64466&show=auctiononline
+
 
 spring:
   datasource:
@@ -15,21 +16,8 @@ spring:
     open-in-view: false
 
 
-#  datasource:
-#    url: jdbc:clickhouse://localhost:8123/test
-#    username: andimus
-#    password: root
-#    driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: create
-#    show-sql: true
-#    open-in-view: false
-#    database-platform: org.hibernate.dialect.ClickHouseDialect
-
-logging:
-  level:
-    org:
-      springframework:
-        web: TRACE
+application:
+  security:
+    jwt:
+      secret-key: 8f15bbfdd567e137221779f4c16a58b9314d0360f7c520b7ad390a226eb027a0
+      expiration: 18000000 # 5 hours
