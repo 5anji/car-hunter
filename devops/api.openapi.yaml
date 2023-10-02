@@ -1,0 +1,109 @@
+openapi: 3.0.3
+
+info:
+  title: API for Car Hunter website
+  contact:
+    email: gitlanm@gmail.com
+  license:
+    name: GPLv3
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  version: 0.1.0 alpha
+servers:
+  - url: http://localhost:8081/api
+externalDocs:
+  description: See our source code
+  url: https://github.com/5anji/car-hunter
+
+tags:
+  - name: Authorization
+    description: Operations about
+
+paths:
+  /register:
+    post:
+      tags:
+        - Authorization
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fullName
+                - email
+                - password
+              properties:
+                fullName:
+                  type: string
+                  example: Firstname Lastname
+                  description: Fullname
+                email:
+                  type: string
+                  example: johndoe@gmail.com
+                  description: Mail adress
+                password:
+                  type: string
+                  example: 1234567890qwerty
+                  description: Password (more than 8 characters, any letter and digit must be included)
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Invalid status value
+  /login:
+    post:
+      tags:
+        - Authorization
+      summary: Authentificate user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: johndoe@gmail.com
+                  description: Mail adress
+                password:
+                  type: string
+                  example: 1234567890qwerty
+                  description: Password (more than 8 characters, any letter and digit must be included)
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YW5lYUBnbWFpbC5jb20iLCJpYXQiOjE2OTYyMzcyMDMsImV4cCI6MTY5NjI1NTIwM30.z-ZmudO8bRUq9xAS6b4OgJI_g4dd4SyrkG6c_TvkVFc
+                    description: Generated access token
+        "400":
+          description: Invalid status value
+  /logout:
+    delete:
+      tags:
+        - Authorization
+      summary: Log out user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
