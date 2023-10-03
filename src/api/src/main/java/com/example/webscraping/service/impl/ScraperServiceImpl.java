@@ -26,13 +26,8 @@ public class ScraperServiceImpl implements ScraperService {
     @Value("#{'${website.urls}'.split(',')}")
     List<String> urls;
 
-    public List<Integer> getMaxPages() {
-
-        return null;
-    }
-
     @Override
-    public Set<ResponseDTO> getVehicleByModel(String vehicleModel) throws IOException {
+    public Set<ResponseDTO> getVehicleByModel() throws IOException {
         Set<ResponseDTO> responseDTOS = new HashSet<>();
         for (String url : urls) {
 
@@ -42,7 +37,7 @@ public class ScraperServiceImpl implements ScraperService {
 //            if (url.contains("riyasewana")) {
 //                getVehicleByModelFromRiyase(responseDTOS, url + vehicleModel, Map.of("X-POWERED-BY", "Spring Framework 6"));
 //            }
-                 if (url.contains("autobid")) {
+            if (url.contains("autobid")) {
                 getVehicleByModelFromAutobid(responseDTOS, url, Map.of("X-POWERED-BY", "Spring Framework 6"));
             }
         }
@@ -64,8 +59,8 @@ public class ScraperServiceImpl implements ScraperService {
         Document document = Optional.of(Jsoup.connect(scrapedUrl).get()).orElseThrow();
         Element element = Optional.ofNullable(document.getElementById("content")).orElseThrow(IOException::new);
         Elements elements = Optional.of(element.getElementsByTag("a")).orElseThrow();
-        //
 
+        //
         Element total = Optional.of(element.getElementsByClass("pagination")).orElseThrow(IOException::new).first();
         Integer totalPageNumber = null;
         if (total != null) {
@@ -75,8 +70,6 @@ public class ScraperServiceImpl implements ScraperService {
         List<Integer> pagesList = IntStream.rangeClosed(2, totalPageNumber)
                 .boxed()
                 .toList();
-
-        System.out.println();
         //
 
         if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -160,16 +153,24 @@ public class ScraperServiceImpl implements ScraperService {
         httpURLConnection.setRequestProperty("Referer", "https://www.google.com/");// referer
         httpURLConnection.setRequestMethod("GET");
         Document document = Optional.of(Jsoup.connect(scrapedUrl).get()).orElseThrow(IOException::new);
+        Element element = Optional.ofNullable(document.getElementById("p")).orElseThrow();
+        Elements elements1 = Optional.of(document.getElementsByClass("csc-default")).orElseThrow();
+        Element elements2 = Optional.ofNullable(document.getElementById("placeholder_content")).orElseThrow();
+        Elements elements3 = Optional.of(document.select("div.ui-tabs.ui-widget.ui-widget-content.ui-corner-all")).orElseThrow();
+        Elements elementsT = Optional.of(document.select("div.auctionType_t.atc_4")).orElseThrow();
+        Elements elementst = Optional.of(document.getElementsByClass("auctionType_t atc_4")).orElseThrow();
 
-        Elements elements = Optional.of(document.getElementsByClass("carListRow js_cars_row")).orElseThrow();
-        for (Element element : elements) {
-            ResponseDTO responseDTO = new ResponseDTO();
-            responseDTO.setTitle(element.getElementsByClass("carName js-car-name").text());
-            responseDTO.setUrl("https://autobid.de/?action=car&show=details&id=" + element.id().replace("car_",""));
 
-            if (responseDTO.getUrl() != null) responseDTOS.add(responseDTO);
+        System.out.println();
 
-        }
+//        for (Element element : elements) {
+//            ResponseDTO responseDTO = new ResponseDTO();
+//            responseDTO.setTitle(element.getElementsByClass("carName js-car-name").text());
+//            responseDTO.setUrl("https://autobid.de/?action=car&show=details&id=" + element.id().replace("car_", ""));
+//
+//            if (responseDTO.getUrl() != null) responseDTOS.add(responseDTO);
+//
+//        }
 
     }
 

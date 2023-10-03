@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface ScraperService {
-    Set<ResponseDTO> getVehicleByModel(String vehicleModel) throws IOException;
+    Set<ResponseDTO> getVehicleByModel() throws IOException;
 
     void getVehicleByModelFromRiyase(Set<ResponseDTO> responseDTOS, String url, Map<String, String> header) throws IOException;
 

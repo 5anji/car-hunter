@@ -22,9 +22,11 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private String firstname;
-    private String lastname;
+    @Column(nullable = false)
+    private String fullName;
+    @Column(nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
 
 
