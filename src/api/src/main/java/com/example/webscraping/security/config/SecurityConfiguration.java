@@ -28,12 +28,12 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.requestMatchers(
-                        "/api/v1/auth/**").permitAll())
+                        "/api/**").permitAll())
                 .authorizeHttpRequests(authManager -> authManager.anyRequest().authenticated())
                 .sessionManagement(scurPerm -> scurPerm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logoutHandler -> logoutHandler.logoutUrl("/api/v1/auth/logout"))
+                .logout(logoutHandler -> logoutHandler.logoutUrl("/api/logout"))
                 .logout(logout -> logout.addLogoutHandler(logoutHandler))
                 .logout(logout -> logout.logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()))
         ;

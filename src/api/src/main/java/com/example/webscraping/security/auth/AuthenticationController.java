@@ -3,11 +3,13 @@ package com.example.webscraping.security.auth;
 import com.example.webscraping.security.config.LogoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
@@ -15,18 +17,19 @@ public class AuthenticationController {
     private final LogoutService logoutService;
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(CREATED)
     public void register(@RequestBody RegisterRequest request) {
         service.register(request);
     }
 
-    @PostMapping("/authenticate")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/login")
+    @ResponseStatus(CREATED)
     public AuthenticationResponse authenticate(@RequestBody AuthenticationRequest request) {
         return service.authenticate(request);
     }
 
-    @PostMapping("/logout")
+    @DeleteMapping("/logout")
+    @ResponseStatus(OK)
     public void logout(HttpServletRequest request) {
         logoutService.logout(request, null, null);
     }

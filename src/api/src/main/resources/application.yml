@@ -1,5 +1,5 @@
 website:
-  urls: https://ikman.lk/en/ads/sri-lanka/vehicles?sort=relevance&buy_now=0&urgent=0&query=,https://riyasewana.com/search/,https://autobid.de/?action=cars&auction=64466&show=auctiononline
+  urls: https://ikman.lk/en/ads/sri-lanka/vehicles?sort=relevance&buy_now=0&urgent=0&query=,https://riyasewana.com/search/,https://autobid.de/?action=auctions
 
 
 spring:
@@ -21,3 +21,11 @@ application:
     jwt:
       secret-key: 8f15bbfdd567e137221779f4c16a58b9314d0360f7c520b7ad390a226eb027a0
       expiration: 18000000 # 5 hours
+
+server:
+  port: 8081
+  tomcat:
+    threads:
+      max: 100
+
+

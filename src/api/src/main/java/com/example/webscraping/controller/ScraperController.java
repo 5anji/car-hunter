@@ -16,9 +16,9 @@ import java.util.Set;
 public class ScraperController {
     private final ScraperService scraperService;
 
-    @GetMapping(path = "/{vehicleModel}")
-    public Set<ResponseDTO> getVehicleByModel(@PathVariable String vehicleModel) throws IOException {
-        return scraperService.getVehicleByModel(vehicleModel);
+    @GetMapping(path = "/all")
+    public Set<ResponseDTO> getVehicleByModel() throws IOException {
+        return scraperService.getVehicleByModel();
     }
 
 }
