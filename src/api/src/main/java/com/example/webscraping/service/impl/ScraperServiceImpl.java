@@ -2,6 +2,8 @@ package com.example.webscraping.service.impl;
 
 import com.example.webscraping.model.ResponseDTO;
 import com.example.webscraping.service.ScraperService;
+import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.LoadState;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,6 +18,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 
@@ -143,22 +147,51 @@ public class ScraperServiceImpl implements ScraperService {
 
     @Override
     public void getVehicleByModelFromAutobid(Set<ResponseDTO> responseDTOS, String url, @RequestHeader Map<String, String> header) throws IOException {
-        String apiKey = "b84fea938e623916c18c199a04817b5c";
-        String scrapedUrl = "http://api.scraperapi.com?api_key=" + apiKey + "&url=" + url + "&keep_headers=true&country_code=us";
-        URL url1 = new URL(scrapedUrl);
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
-        httpURLConnection.setRequestProperty("Content-Type", "application/json");
-        httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0"); //make rotation
-        httpURLConnection.setRequestProperty("X-MyHeader", "123");
-        httpURLConnection.setRequestProperty("Referer", "https://www.google.com/");// referer
-        httpURLConnection.setRequestMethod("GET");
-        Document document = Optional.of(Jsoup.connect(scrapedUrl).get()).orElseThrow(IOException::new);
-        Element element = Optional.ofNullable(document.getElementById("p")).orElseThrow();
-        Elements elements1 = Optional.of(document.getElementsByClass("csc-default")).orElseThrow();
-        Element elements2 = Optional.ofNullable(document.getElementById("placeholder_content")).orElseThrow();
-        Elements elements3 = Optional.of(document.select("div.ui-tabs.ui-widget.ui-widget-content.ui-corner-all")).orElseThrow();
-        Elements elementsT = Optional.of(document.select("div.auctionType_t.atc_4")).orElseThrow();
-        Elements elementst = Optional.of(document.getElementsByClass("auctionType_t atc_4")).orElseThrow();
+//        String apiKey = "b84fea938e623916c18c199a04817b5c";
+//        String scrapedUrl = "http://api.scraperapi.com?api_key=" + apiKey + "&url=" + url + "&keep_headers=true&country_code=us";
+//        URL url1 = new URL(scrapedUrl);
+//        HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
+//        httpURLConnection.setRequestProperty("Content-Type", "application/json");
+//        httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0"); //make rotation
+//        httpURLConnection.setRequestProperty("X-MyHeader", "123");
+//        httpURLConnection.setRequestProperty("Referer", "https://www.google.com/");// referer
+//        httpURLConnection.setRequestMethod("GET");
+//        Document document = Optional.of(Jsoup.connect(scrapedUrl).get()).orElseThrow(IOException::new);
+//        Element element = Optional.ofNullable(document.getElementById("p")).orElseThrow();
+//        Elements elements1 = Optional.of(document.select("div.csc-default")).orElseThrow();
+//        Element elements2 = Optional.ofNullable(document.getElementById("placeholder_content")).orElseThrow();
+//        Elements elements3 = Optional.of(document.select("div.ui-tabs.ui-widget.ui-widget-content.ui-corner-all")).orElseThrow();
+//        Evaluator evaluator = new Evaluator.Class("auctionType_t atc_4");
+//        Elements elements5 = Optional.of(document.select("div[class='auctionType_t atc_4']")).orElseThrow();
+
+
+//        Elements elements6 = Optional.of(document.getElementsByClass("auctionType_t atc_4")).orElseThrow();
+
+        Playwright playwright = Playwright.create();
+        Browser browser = playwright.chromium().launch();
+        BrowserContext context = browser.newContext(new Browser.NewContextOptions()
+                .setLocale("en-US")
+                .setTimezoneId("Europe/Berlin"));
+        Page page = context.newPage();
+        page.navigate(url);
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+
+        String title = page.title();
+        List<String> strings1 = page.locator(".term_box_day").allInnerTexts();
+
+        List<ElementHandle> elementHandles = page.querySelectorAll(".auctionType_t.atc_4");
+        List<ElementHandle> elementHandles1 = page.querySelectorAll(".term_d_padd");
+
+        List<String> auctionTypeTAtc4 = elementHandles1.stream()
+                .filter(elementHandle -> elementHandle.innerHTML().contains("auctionType_t atc_4"))
+                .map(elementHandle -> elementHandle.querySelectorAll(".term_box_day.js_auction_row"))
+                .flatMap(List::stream)
+                .filter(elementHandle -> elementHandle.innerHTML().contains("https://autobid.de"))
+                .map(elementHandle -> elementHandle.getAttribute("autobid:auctionid"))
+                .toList();
+
+
 
 
         System.out.println();
