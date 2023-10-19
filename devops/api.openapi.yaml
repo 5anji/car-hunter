@@ -2,6 +2,7 @@ openapi: 3.0.3
 
 info:
   title: API for Car Hunter website
+  description: A basic API for getting information from DB, that contains scrapped car auction sites
   contact:
     email: gitlanm@gmail.com
   license:
@@ -15,19 +16,21 @@ externalDocs:
   url: https://github.com/5anji/car-hunter
 
 tags:
-  - name: Authorization
+  - name: "Authorization"
     description: Operations about Authorization
-  - name: Vehicles
+  - name: "Vehicles"
     description: Operations about Vehicles
 
 paths:
   /register:
     post:
       tags:
-        - Authorization
+        - "Authorization"
       summary: Register new user
+      operationId: createUser
       requestBody:
         required: true
+        description: Profile registration body
         content:
           application/json:
             schema:
@@ -50,17 +53,21 @@ paths:
                   example: 1234567890qwerty
                   description: Password (more than 8 characters, any letter and digit must be included)
       responses:
-        201:
+        "201":
           description: Created
-        400:
+        "400":
           description: Invalid status value
+        "500":
+          description: return internal exception/error as response
   /login:
     post:
       tags:
-        - Authorization
+        - "Authorization"
       summary: Authentificate user
+      operationId: createSession
       requestBody:
         required: true
+        description: Login schema
         content:
           application/json:
             schema:
@@ -78,53 +85,65 @@ paths:
                   example: 1234567890qwerty
                   description: Password (more than 8 characters, any letter and digit must be included)
       responses:
-        201:
+        "201":
           description: Created
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  access_token:
+                  access-token:
                     type: string
                     example: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YW5lYUBnbWFpbC5jb20iLCJpYXQiOjE2OTYyMzcyMDMsImV4cCI6MTY5NjI1NTIwM30.z-ZmudO8bRUq9xAS6b4OgJI_g4dd4SyrkG6c_TvkVFc
                     description: Generated access token
-        400:
+        "400":
           description: Invalid status value
+        "500":
+          description: return internal exception/error as response
   /logout:
     delete:
       tags:
-        - Authorization
+        - "Authorization"
       summary: Log out user
+      operationId: deleteSession
       security:
         - bearerAuth: []
       responses:
-        200:
+        "200":
           description: OK
-        401:
+        "401":
           description: Unauthorized
+        "500":
+          description: return internal exception/error as response
   /vehicles:
     get:
+      tags:
+        - "Vehicles"
+      summary: Get all vehicles
+      operationId: getVehicles
       parameters:
         # pagination
-        - name: pages
+        - name: page
           in: query
           required: true
           schema:
             type: integer
-          description: The number of pages to be returned
-        - name: item-count
+            example: 3
+          description: The number of page
+        - name: per-page
           in: query
           required: true
           schema:
             type: integer
             default: 10
+            example: 15
           description: The numbers of items to be returned per page
         # search
         - name: search
           in: query
           schema:
             type: string
+            example: BMW%20340
           description: Search for the given string and return all matched results
         # sorting
         - name: sort
@@ -134,6 +153,8 @@ paths:
             enum:
               - asc
               - desc
+            default: asc
+            example: asc
           description: Mark to order ascending or descending
         - name: sort-by
           in: query
@@ -142,9 +163,11 @@ paths:
             enum:
               - auction-date
               - registration-date
+            default: auction-date
+            example: auction-date
           description: Select what to be sorted
         # filters
-        - name: source-list
+        - name: source-list[]
           in: query
           style: form
           explode: false
@@ -157,102 +180,128 @@ paths:
                 - bca-europe.com
                 # - 3rd_site.com
                 # - 4th_site.com
+              example: [autobid.de, bca-europe.com]
           description: Array of strings that represents the include list of which sites must be searched
         - name: price-min
           in: query
           schema:
             type: integer
             format: uint32
-          description: Minimum price of vehicle
+            example: 9000
+          description: Minimum price of vehicle in euros
         - name: price-max
           in: query
           schema:
             type: integer
             format: uint32
-          description: Maximum price of vehicle
-        - name: body-type
-          in: query
-          schema:
-            type: string
-            # enum:
-            #   - Sedan
-            #   - Coupe
-            #   - Wagon
-            #   - Hatchback
-            #   - Van
-            #   - Cabrio
-          description: Body type of vehicle
+            example: 45000
+          description: Maximum price of vehicle in euros
+        # - name: body-type
+        #   in: query
+        #   schema:
+        #     type: string
+        #     # enum:
+        #     #   - Sedan
+        #     #   - Coupe
+        #     #   - Wagon
+        #     #   - Hatchback
+        #     #   - Van
+        #     #   - Cabrio
+        #   description: Body type of vehicle
         - name: mileage-min
           in: query
           schema:
             type: integer
             format: uint32
-          description: Minimum mileage of vehicle
+            example: 50000
+          description: Minimum mileage of vehicle in km
         - name: mileage-max
           in: query
           schema:
             type: integer
             format: uint32
-          description: Maximum mileage of vehicle
-        - name: ecap-min
+            example: 200000
+          description: Maximum mileage of vehicle in km
+        - name: dis-min
           in: query
           schema:
             type: number
             format: double
-          description: Engine capacity of the vehicle
-        - name: ecap-max
+            example: 2.2
+          description: Displacement (minimum) of the vehicle in liters
+        - name: dis-max
           in: query
           schema:
             type: number
             format: double
-          description: Engine capacity of the vehicle
-      tags:
-        - Vehicles
-      summary: Get all vehicles
+            example: 3.5
+          description: Displacement (maximum) of the vehicle in liters
       responses:
-        200:
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Vehicle"
-        404:
+                type: object
+                properties:
+                  total-items:
+                    type: integer
+                    description: Number of total vehicles found
+                  found:
+                    type: integer
+                    description: Number of vehicles found in current page
+                  page:
+                    type: integer
+                    description: The page specified from query param
+                  per-page:
+                    type: integer
+                    description: The numbers of items to be returned per page specified from query param
+                  vehicles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vehicle"
+        "401":
+          description: Unauthorized
+        "404":
           description: No vehicle found
+        "500":
+          description: return internal exception/error as response
   /vehicle/{id}:
     get:
       tags:
-        - Vehicles
+        - "Vehicles"
       summary: Get one vehicle by id
+      operationId: getVehicleById
       parameters:
         - name: id
           in: path
           required: true
+          description: id of the vehicle
           schema:
             type: integer
             format: uint64
             example: 2
       responses:
-        200:
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Vehicle_ext"
-        400:
+                $ref: "#/components/schemas/VehicleExt"
+        "400":
           description: Invalid ID supplied
-        404:
+        "401":
+          description: Unauthorized
+        "404":
           description: Vehicle not found
+        "500":
+          description: return internal exception/error as response
 components:
   schemas:
     Vehicle:
       type: object
+      description: Schema of vehicle used in main page
       properties:
-        id:
-          type: integer
-          format: uint64
-          example: 2
         title:
           type: string
           example: Mercedes-Benz Sprinter
@@ -265,22 +314,19 @@ components:
           type: integer
           format: int32
           example: 11
-        auction_date:
+        auction-date:
           type: string
-          format: date-time
-          pattern: "18 MMM YYYY hh:mm"
+          description: Date returned in following format DD MMM YYYY hh:mm
+          pattern: ^(\d{2})\s([A-Za-z]{3})\s(\d{4})\s(\d{2}:\d{2})$
           example: 18 Oct 2023 14:30
-    Vehicle_ext:
+    VehicleExt:
       type: object
+      description: Schema of vehicle used in advanced view page
       properties:
-        id:
-          type: integer
-          format: uint64
-          example: 2
         title:
           type: string
           example: Mercedes-Benz Sprinter
-        photo_urls:
+        photo-urls:
           type: array
           description: array of image urls of the vehicle
           items:
@@ -298,20 +344,20 @@ components:
           description: price in euros (€)
           format: uint32
           example: 11499
-        body_type:
+        body-type:
           type: string
           example: Van
-        date_of_registration:
+        registration-date:
           type: string
-          format: date-time
-          pattern: MMM YYYY
+          description: Date returned in following format MMM YYYY
+          pattern: ^([A-Za-z]{3})\s(\d{4})$
           example: Aug 2021
         mileage:
           type: integer
           description: Dimension unit is KM
           format: uint32
           example: 120500
-        engine_capacity:
+        displacement:
           type: number
           description: Engine volume in liters
           format: double
@@ -324,13 +370,14 @@ components:
           description: source url of the found vehicle
           format: url
           example: http://example.com
-        auction_date:
+        auction-date:
           type: string
-          format: date-time
-          pattern: DD MMM YYYY hh:mm
+          description: Date returned in following format DD MMM YYYY hh:mm
+          pattern: ^(\d{2})\s([A-Za-z]{3})\s(\d{4})\s(\d{2}:\d{2})$
           example: 18 Oct 2023 14:30
   securitySchemes:
     bearerAuth:
+      description: Security schema used for login/logout system
       type: http
       scheme: bearer
       bearerFormat: JWT
