@@ -85,6 +85,23 @@ public class CarServiceImpl implements CarService {
                 .filter(elementHandles2 -> !elementHandles2.isEmpty())
                 .toList();
 
+//        auctionTypeTAtc4
+//                .forEach(elementHandles -> elementHandles.stream()
+//                .map(elementHandle -> elementHandle.getAttribute("autobid:auctionid"))
+//                .toList());
+
+        List<List<String>> auctionIdList = auctionTypeTAtc4
+                .stream()
+                .map(elements -> {
+                    return elements
+                            .stream()
+                            .map(element -> {
+                                return element.getAttribute("autobid:auctionid");
+                            })
+                            .toList();
+                })
+                .toList();
+
 
         //working date time
 //        List<LocalDate> dates = filteredAuctions.stream()
@@ -127,14 +144,15 @@ public class CarServiceImpl implements CarService {
 //                })
 //        );
 
-        auctionTypeTAtc4.forEach(elementHandle -> {
-                    String attribute = elementHandle.get(2).getAttribute("autobid:auctionid");
+        auctionIdList.forEach(idList -> {
+                    String attribute = idList.get(2);
                     page.navigate("https://autobid.de/?action=car&show=next&auction=" + attribute);
                     page.waitForLoadState(LoadState.NETWORKIDLE);
                     String hrefToScrapePage = page.querySelector(".js_popup_window").getAttribute("href");
                     page.navigate("https://autobid.de/" + hrefToScrapePage);
                     page.waitForLoadState(LoadState.NETWORKIDLE);
                     saveEveryCarByAuction(page, hrefToScrapePage);
+            System.out.println();
                 }
         );
 
@@ -235,6 +253,8 @@ public class CarServiceImpl implements CarService {
                     .url(currentPageUrl)
                     .auctionDate(ZonedDateTime.now())//hardcoded
                     .build());
+
+
             hrefToNextPage = page.querySelectorAll("a.arrow").get(1).getAttribute("href");
             System.out.println();
         }
