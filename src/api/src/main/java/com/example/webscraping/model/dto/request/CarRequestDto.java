@@ -1,28 +1,22 @@
-package com.example.webscraping.model.dbo;
+package com.example.webscraping.model.dto.request;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class CarDbo {
-    @Id
-    @GeneratedValue
-    private Long id;
+public class CarRequestDto {
     private String bodyType;
     private String title;
     private YearMonth dateOfRegistration;
     private Integer millage;
     private Double engineCapacity;
-    @ElementCollection
     private List<String> photoUrls;
     private String gearBox;
     private Integer price;
