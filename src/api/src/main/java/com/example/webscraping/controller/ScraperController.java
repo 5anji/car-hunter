@@ -1,22 +1,23 @@
 package com.example.webscraping.controller;
 
+import com.example.webscraping.model.dto.response.CarResponseDto;
 import com.example.webscraping.service.CarService;
+import com.example.webscraping.service.SaveCarService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
-@RequestMapping(path = "/")//?????????
+@RequestMapping
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class ScraperController {
-    private final CarService carService;
+    private final SaveCarService saveCarService;
 
     @GetMapping(path = "/all")
     public void saveVehiclesFromAutoBid() throws IOException {
-        carService.saveVehicles();
+        saveCarService.saveVehicles();
     }
 
 }
