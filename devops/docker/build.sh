@@ -57,7 +57,9 @@ case ${COMMAND} in
                            -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
                            -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
                            -e DISPLAY -e "QT_X11_NO_MITSHM=1" \
-                           -e POSTGRES_PASSWORD=car-hunter \
+                           -e POSTGRES_PASSWORD=postgres \
+                           -e SERVER_PORT=8081 \
+                           -p 8081:8081 \
                            --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
                            --device=/dev/net/tun --sysctl="net.ipv6.conf.default.disable_ipv6=0" \
                            --privileged \

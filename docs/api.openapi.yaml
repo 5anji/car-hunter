@@ -121,121 +121,103 @@ paths:
         - "Vehicles"
       summary: Get all vehicles
       operationId: getVehicles
-      parameters:
-        # pagination
-        - name: page
-          in: query
-          required: true
-          schema:
-            type: integer
-            example: 3
-          description: The number of page
-        - name: per-page
-          in: query
-          required: true
-          schema:
-            type: integer
-            default: 10
-            example: 15
-          description: The numbers of items to be returned per page
-        # search
-        - name: search
-          in: query
-          schema:
-            type: string
-            example: BMW%20340
-          description: Search for the given string and return all matched results
-        # sorting
-        - name: sort
-          in: query
-          schema:
-            type: string
-            enum:
-              - asc
-              - desc
-            default: asc
-            example: asc
-          description: Mark to order ascending or descending
-        - name: sort-by
-          in: query
-          schema:
-            type: string
-            enum:
-              - auction-date
-              - registration-date
-            default: auction-date
-            example: auction-date
-          description: Select what to be sorted
-        # filters
-        - name: source-list[]
-          in: query
-          style: form
-          explode: false
-          schema:
-            type: array
-            items:
-              type: string
-              enum:
-                - autobid.de
-                - bca-europe.com
-                # - 3rd_site.com
-                # - 4th_site.com
-              example: [autobid.de, bca-europe.com]
-          description: Array of strings that represents the include list of which sites must be searched
-        - name: price-min
-          in: query
-          schema:
-            type: integer
-            format: uint32
-            example: 9000
-          description: Minimum price of vehicle in euros
-        - name: price-max
-          in: query
-          schema:
-            type: integer
-            format: uint32
-            example: 45000
-          description: Maximum price of vehicle in euros
-        # - name: body-type
-        #   in: query
-        #   schema:
-        #     type: string
-        #     # enum:
-        #     #   - Sedan
-        #     #   - Coupe
-        #     #   - Wagon
-        #     #   - Hatchback
-        #     #   - Van
-        #     #   - Cabrio
-        #   description: Body type of vehicle
-        - name: mileage-min
-          in: query
-          schema:
-            type: integer
-            format: uint32
-            example: 50000
-          description: Minimum mileage of vehicle in km
-        - name: mileage-max
-          in: query
-          schema:
-            type: integer
-            format: uint32
-            example: 200000
-          description: Maximum mileage of vehicle in km
-        - name: dis-min
-          in: query
-          schema:
-            type: number
-            format: double
-            example: 2.2
-          description: Displacement (minimum) of the vehicle in liters
-        - name: dis-max
-          in: query
-          schema:
-            type: number
-            format: double
-            example: 3.5
-          description: Displacement (maximum) of the vehicle in liters
+      requestBody:
+        required: true
+        description: Schema for applying filters and pagination
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - page
+                - per-page
+              properties:
+                # pagination
+                page:
+                  type: integer
+                  example: 3
+                  description: The number of page
+                per-page:
+                  type: integer
+                  default: 10
+                  example: 15
+                  description: The numbers of items to be returned per page
+                # search
+                search:
+                  type: string
+                  example: BMW%20340
+                  description: Search for the given string and return all matched results
+                # sorting
+                sort:
+                  type: string
+                  enum:
+                    - asc
+                    - desc
+                  default: asc
+                  example: asc
+                  description: Mark to order ascending or descending
+                sort-by:
+                  type: string
+                  enum:
+                    - auction-date
+                    - registration-date
+                  default: auction-date
+                  example: auction-date
+                  description: Select what to be sorted
+                # filters
+                source-list:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - autobid.de
+                      - bca-europe.com
+                      # - 3rd_site.com
+                      # - 4th_site.com
+                    example: [autobid.de, bca-europe.com]
+                  description: Array of strings that represents the include list of which sites must be searched
+                price-min:
+                  type: integer
+                  format: uint32
+                  example: 9000
+                  description: Minimum price of vehicle in euros
+                price-max:
+                  type: integer
+                  format: uint32
+                  example: 45000
+                  description: Maximum price of vehicle in euros
+                # - name: body-type
+                #   in: query
+                #   schema:
+                #     type: string
+                #     # enum:
+                #     #   - Sedan
+                #     #   - Coupe
+                #     #   - Wagon
+                #     #   - Hatchback
+                #     #   - Van
+                #     #   - Cabrio
+                #   description: Body type of vehicle
+                mileage-min:
+                  type: integer
+                  format: uint32
+                  example: 50000
+                  description: Minimum mileage of vehicle in km
+                mileage-max:
+                  type: integer
+                  format: uint32
+                  example: 200000
+                  description: Maximum mileage of vehicle in km
+                dis-min:
+                  type: number
+                  format: double
+                  example: 2.2
+                  description: Displacement (minimum) of the vehicle in liters
+                dis-max:
+                  type: number
+                  format: double
+                  example: 3.5
+                  description: Displacement (maximum) of the vehicle in liters
       responses:
         "200":
           description: OK
