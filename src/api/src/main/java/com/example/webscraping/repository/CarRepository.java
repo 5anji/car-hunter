@@ -1,12 +1,15 @@
 package com.example.webscraping.repository;
 
 import com.example.webscraping.model.dbo.CarDbo;
+import com.example.webscraping.model.enums.Source;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface CarRepository extends JpaRepository<CarDbo, Long> {
@@ -15,21 +18,10 @@ public interface CarRepository extends JpaRepository<CarDbo, Long> {
             "WHERE c.price BETWEEN :priceMin AND :priceMax AND " +
             "c.millage BETWEEN :millageMin AND :millageMax AND " +
             "c.displacement BETWEEN :displacementMin AND :displacementMax AND " +
-            "c.title LIKE :title")
-    Page<CarDbo> findCarByTitle(@Param("title")String title, Pageable pageable,
-                                @Param("priceMin")Integer priceMin, @Param("priceMax")Integer priceMax,
-                                @Param("millageMin")Integer millageMin, @Param("millageMax")Integer millageMax,
-                                @Param("displacementMin")Double displacementMin, @Param("displacementMax")Double displacementMax);
-
-
-//    @Query(value = "SELECT c " +
-//            "FROM car_dbo c " +
-//            "WHERE c.price BETWEEN (:priceMin) AND (:priceMax) " +
-//            "  AND c.millage BETWEEN (:millageMin) AND (:millageMax) " +
-//            "  AND c.displacement BETWEEN (:displacementMin) AND (:displacementMax) " +
-//            "  AND c.title LIKE '%' + (:title) + '%'", nativeQuery = true)
-//    Page<CarDbo> findCarByTitle(@Param("title")String title, Pageable pageable,
-//                                @Param("priceMin")Integer priceMin, @Param("priceMax")Integer priceMax,
-//                                @Param("millageMin")Integer millageMin, @Param("millageMax")Integer millageMax,
-//                                @Param("displacementMin")Double displacementMin, @Param("displacementMax")Double displacementMax);
+            "c.source IN :sourceList AND c.title LIKE :title")
+    Page<CarDbo> findCarByTitle(@Param("title") String title, Pageable pageable,
+                                @Param("priceMin") Integer priceMin, @Param("priceMax") Integer priceMax,
+                                @Param("millageMin") Integer millageMin, @Param("millageMax") Integer millageMax,
+                                @Param("displacementMin") Double displacementMin, @Param("displacementMax") Double displacementMax,
+                                @Param("sourceList") List<String> sourceList);
 }

@@ -1,37 +1,43 @@
 package com.example.webscraping.model.dto.request;
 
-import com.example.webscraping.model.enums.SiteName;
+import com.example.webscraping.model.enums.Source;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.springframework.data.domain.Sort;
+
+import java.util.Collections;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonNaming(PropertyNamingStrategies.KebabCaseStrategy.class)
 public class FilteredCarsByTitleRequest {
     @Builder.Default
-    private String title = "";
+    private String search = "";
     @Builder.Default
     private Integer page = 0;
     @Builder.Default
     private Integer perPage = 10;
     @Builder.Default
-    private Integer minPrice = 0;
+    private Integer priceMin = 0;
     @Builder.Default
-    private Integer maxPrice = Integer.MAX_VALUE;
+    private Integer priceMax = Integer.MAX_VALUE;
     @Builder.Default
-    private Integer minMillage = 0;
+    private Integer millageMin = 0;
     @Builder.Default
-    private Integer maxMillage = Integer.MAX_VALUE;
+    private Integer millageMax = Integer.MAX_VALUE;
     @Builder.Default
-    private Double minDisplacement = 0.0;
+    private Double displacementMin = 0.0;
     @Builder.Default
-    private Double maxDisplacement = Double.MAX_VALUE;
+    private Double displacementMax = Double.MAX_VALUE;
     @Builder.Default
-    private String field = "auctionDate";
+    private List<String> sourceList = Collections.emptyList();
     @Builder.Default
-    private SiteName siteName = SiteName.AUTOBID;
+    private String sortBy = "auctionDate";
     @Builder.Default
-    private Sort.Direction type = Sort.Direction.ASC;
+    private Sort.Direction sort = Sort.Direction.ASC;
 }

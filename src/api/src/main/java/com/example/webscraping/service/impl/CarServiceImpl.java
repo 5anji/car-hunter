@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -28,12 +27,13 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Page<CarResponseDto> getCarByTitle(FilteredCarsByTitleRequest filter) {
-        List<CarResponseDto> carResponseDtos = carRepository.findCarByTitle("%" + filter.getTitle() + "%",
+        List<CarResponseDto> carResponseDtos = carRepository.findCarByTitle("%" + filter.getSearch() + "%",
                         PageRequest.of(filter.getPage(), filter.getPerPage(),
-                                Sort.by(filter.getType(), filter.getField())),
-                        filter.getMinPrice(), filter.getMaxPrice(),
-                        filter.getMinMillage(), filter.getMaxMillage(),
-                        filter.getMinDisplacement(), filter.getMaxDisplacement())
+                                Sort.by(filter.getSort(), filter.getSortBy())),
+                        filter.getPriceMin(), filter.getPriceMax(),
+                        filter.getMillageMin(), filter.getMillageMax(),
+                        filter.getDisplacementMin(), filter.getDisplacementMax(),
+                        filter.getSourceList().stream().map(s -> ))
                 .map(CarServiceImpl::convertFromDboIntoDto)
                 .toList();
         return new PageImpl<>(carResponseDtos);
@@ -46,13 +46,13 @@ public class CarServiceImpl implements CarService {
                 .millage(carDbo.getMillage())
                 .url(carDbo.getUrl())
                 .price(carDbo.getPrice())
-                .registrationDate(carDbo.getRegistrationDate().format(DateTimeFormatter.ofPattern("MMM yyyy")))
+                .registrationDate(carDbo.getRegistrationDate())
                 .displacement(carDbo.getDisplacement())
-                .auctionDate(carDbo.getAuctionDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")))
+                .auctionDate(carDbo.getAuctionDate())
                 .photoUrls(carDbo.getPhotoUrls())
                 .gearBox(carDbo.getGearBox())
                 .bodyType(carDbo.getBodyType())
-                .siteName(carDbo.getSiteName())
+                .source(carDbo.getSource())
                 .build();
     }
 }

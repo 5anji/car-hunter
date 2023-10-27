@@ -1,6 +1,6 @@
 package com.example.webscraping.model.dto.request;
 
-import com.example.webscraping.model.enums.SiteName;
+import com.example.webscraping.model.enums.Source;
 import lombok.*;
 
 import java.time.YearMonth;
@@ -24,5 +24,5 @@ public class CarRequestDto {
     private ZonedDateTime auctionDate;
     private String url;
     private String unitOfMillage;
-    private SiteName siteName;
+    private Source source;
 }

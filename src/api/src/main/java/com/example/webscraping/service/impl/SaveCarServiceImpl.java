@@ -1,9 +1,8 @@
 package com.example.webscraping.service.impl;
 
-import com.example.webscraping.model.ResponseDTO;
 import com.example.webscraping.model.dbo.CarDbo;
 import com.example.webscraping.model.dto.request.CarRequestDto;
-import com.example.webscraping.model.enums.SiteName;
+import com.example.webscraping.model.enums.Source;
 import com.example.webscraping.repository.CarRepository;
 import com.example.webscraping.service.SaveCarService;
 import com.microsoft.playwright.*;
@@ -13,10 +12,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import java.time.YearMonth;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 @Service
@@ -29,13 +30,12 @@ public class SaveCarServiceImpl implements SaveCarService {
 
     @Override
     public void saveVehicles() {
-        Set<ResponseDTO> responseDTOS = new HashSet<>();
         for (String url : urls) {
-            getVehicleByModelFromAutobid(responseDTOS, url, Map.of("X-POWERED-BY", "Spring Framework 6"));
+            getVehicleByModelFromAutobid(url, Map.of("X-POWERED-BY", "Spring Framework 6"));
         }
     }
 
-    public void getVehicleByModelFromAutobid(Set<ResponseDTO> responseDTOS, String url, @RequestHeader Map<String, String> header) {
+    public void getVehicleByModelFromAutobid(String url, @RequestHeader Map<String, String> header) {
 //        String apiKey = "b84fea938e623916c18c199a04817b5c";
 //        String scrapedUrl = "http://api.scraperapi.com?api_key=" + apiKey + "&url=" + url + "&keep_headers=true&country_code=us";
 //        URL url1 = new URL(scrapedUrl);
@@ -77,92 +77,50 @@ public class SaveCarServiceImpl implements SaveCarService {
                 .toList();
 
         //working function to search all available auctions
-        List<List<ElementHandle>> auctionTypeTAtc4 = filteredAuctions.stream()
+        List<ElementHandle> auctionTypeTAtc4 = filteredAuctions.stream()
                 .map(elementHandle -> elementHandle.querySelectorAll(".term_box_day.js_auction_row").stream()
                         .filter(elementHandle1 -> elementHandle1.getAttribute("href").contains("https://autobid.de"))
                         .toList())
                 .filter(elementHandles2 -> !elementHandles2.isEmpty())
+                .flatMap(Collection::stream)
                 .toList();
 
-//        auctionTypeTAtc4
-//                .forEach(elementHandles -> elementHandles.stream()
-//                .map(elementHandle -> elementHandle.getAttribute("autobid:auctionid"))
-//                .toList());
-
-        List<List<String>> auctionIdList = auctionTypeTAtc4.stream()
-                .map(elements -> elements.stream()
-                        .map(element -> element.getAttribute("autobid:auctionid"))
-                        .toList())
+        List<String> auctionIdList = auctionTypeTAtc4.stream()
+                .map(element -> element.getAttribute("autobid:auctionid"))
                 .toList();
-
-
-        //working date time
-//        List<LocalDate> dates = filteredAuctions.stream()
-//                .map(elementHandle -> elementHandle.querySelector(".auctionType_t.atc_4"))
-//                .map(ElementHandle::innerHTML)
-//                .map(s -> s.substring(s.indexOf(' ') + 1).replaceAll("\\.", "-").replaceAll("\n\t", ""))
-//                .map(s -> LocalDate.parse(s, DateTimeFormatter.ofPattern("dd-MM-yyyy")))
-//                .toList();
-//        int size2 = dates.size();
-//        System.out.println();
-//
-//        List<List<LocalTime>> hours = auctionTypeTAtc4.stream()
-//                .map(elementHandle -> elementHandle.stream()
-//                        .map(elementHandle1 -> elementHandle1.querySelector(".term_d3"))
-//                        .map(elementHandle2 -> LocalTime.parse(elementHandle2.querySelector("b").innerText().split(" ")[0]))
-//                        .toList())
-//                .toList();
-//
-//        int size1 = hours.size();
-//        System.out.println();
-//
-//        Map<LocalDate, List<LocalTime>> dateWithHours = new HashMap<>();
-//        for (int i = 0; i < dates.size(); i++) {
-//            dateWithHours.put(dates.get(i), hours.get(i));
-//        }
-//        int size = dateWithHours.size();
-//        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of("GMT+2")).withZoneSameInstant(ZoneId.of("GMT+3"));
-        // end time
 
 
         //working code to save all cars into db
-//        auctionIdList.forEach(idList -> idList.forEach(attribute -> {
-//                    page.navigate("https://autobid.de/?action=car&show=next&auction=" + attribute);
-//                    page.waitForLoadState(LoadState.NETWORKIDLE);
-//                    String hrefToScrapePage = page.querySelector(".js_popup_window").getAttribute("href");
-//                    page.navigate("https://autobid.de/" + hrefToScrapePage);
-//                    page.waitForLoadState(LoadState.NETWORKIDLE);
-//                    saveEveryCarByAuction(page, hrefToScrapePage);
-//                }
-//        ));
-
-        //working code to save only the second day cars into db
-        auctionIdList.forEach(idList -> {
-                    String attribute = idList.get(2);
+        auctionIdList.forEach(attribute -> {
                     page.navigate("https://autobid.de/?action=car&show=next&auction=" + attribute);
                     page.waitForLoadState(LoadState.NETWORKIDLE);
+                    String[] split = page.querySelector(".nav-side").querySelectorAll("div").get(0).innerText().split("\n");
+                    LocalDate date = LocalDate.parse(split[1].split(" ")[1].replaceAll("\\.", "-").replaceAll("\n", ""), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                    LocalTime time = LocalTime.parse(split[2].split(" ")[1]);
+                    ZonedDateTime auctionDateTime = LocalDateTime.of(date, time).atZone(ZoneId.of("GMT+2")).withZoneSameInstant(ZoneId.of("GMT+0"));
                     String hrefToScrapePage = page.querySelector(".js_popup_window").getAttribute("href");
                     page.navigate("https://autobid.de/" + hrefToScrapePage);
                     page.waitForLoadState(LoadState.NETWORKIDLE);
-                    saveEveryCarByAuction(page, hrefToScrapePage);
+                    saveEveryCarByAuction(page, hrefToScrapePage, auctionDateTime);
                 }
         );
 
+
         //code to test scraping
-//        page.navigate("https://autobid.de/?action=car&show=details&id=2575942");
-//                page.waitForLoadState(LoadState.NETWORKIDLE);
-//                String hrefToScrapePage = page.querySelector(".js_popup_window").getAttribute("href");
-//                page.navigate("https://autobid.de/" + hrefToScrapePage);
-//                page.waitForLoadState(LoadState.NETWORKIDLE);
-//                String currentPageUrl = "https://autobid.de/?action=car&show=details&id=2558857";
-////                page.navigate(currentPageUrl);
-//        String displacement = getDisplacement(page);
-//        double v = Double.parseDouble(displacement);
+//        page.navigate("https://autobid.de/?action=car&show=next&auction=65074");
+//        page.waitForLoadState(LoadState.NETWORKIDLE);
+//
 //        System.out.println();
+//        String hrefToScrapePage = page.querySelector(".js_popup_window").getAttribute("href");
+//        page.navigate("https://autobid.de/" + hrefToScrapePage);
+//        page.waitForLoadState(LoadState.NETWORKIDLE);
+//        String currentPageUrl = "https://autobid.de/?action=car&show=details&id=2558857";
+
+        System.out.println();
 
     }
 
-    private void saveEveryCarByAuction(Page page, String hrefToScrapePage) {
+    private void saveEveryCarByAuction(Page page, String hrefToScrapePage, ZonedDateTime auctionDateTime) {
         String hrefToNextPage = hrefToScrapePage;
         while (hrefToNextPage != null) {
             //scrape
@@ -171,7 +129,7 @@ public class SaveCarServiceImpl implements SaveCarService {
             String[] millageWithDimension = page.querySelector(".detal_general").querySelectorAll("tr").stream()
                     .filter(elementHandle -> elementHandle.querySelector("th").innerText().equals("Read mileage:"))
                     .toList().get(0).innerText().split("\t")[1].split(" ");
-            Integer millage;
+            int millage;
             String unitOfMillage;
             if (millageWithDimension.length != 2) {
                 unitOfMillage = "";
@@ -200,8 +158,8 @@ public class SaveCarServiceImpl implements SaveCarService {
                     .bodyType(getBodyType(page))
                     .millage(millage)
                     .url(currentPageUrl)
-                    .siteName(SiteName.AUTOBID)
-                    .auctionDate(ZonedDateTime.now())//hardcoded
+                    .source(Source.AUTOBID)
+                    .auctionDate(auctionDateTime)
                     .build());
 
 
@@ -256,7 +214,7 @@ public class SaveCarServiceImpl implements SaveCarService {
     }
 
     private static Double getDisplacement(Page page) {
-        Double displacement = 0.0;
+        double displacement;
         try {
             displacement = Double.parseDouble(page.querySelector(".d_s_det").innerText().split("\n")[1].split(" ")[0]);
         } catch (NumberFormatException e) {
@@ -266,10 +224,9 @@ public class SaveCarServiceImpl implements SaveCarService {
     }
 
     private static Integer getPrice(Page page) {
-        Integer price = Optional.of(page.querySelector(".price_font").querySelector("td").innerHTML().split(" ")[0].replace(".", ""))
+        return Optional.of(page.querySelector(".price_font").querySelector("td").innerHTML().split(" ")[0].replace(".", ""))
                 .map(Integer::parseInt)
                 .orElse(0);
-        return price;
     }
 
     private static String getTitle(Page page) {
@@ -290,7 +247,7 @@ public class SaveCarServiceImpl implements SaveCarService {
                 .title(carDto.getTitle())
                 .url(carDto.getUrl())
                 .unitOfMillage(carDto.getUnitOfMillage())
-                .siteName(carDto.getSiteName())
+                .source(carDto.getSource())
                 .build());
     }
 

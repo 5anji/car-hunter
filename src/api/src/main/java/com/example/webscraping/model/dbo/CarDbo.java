@@ -1,6 +1,6 @@
 package com.example.webscraping.model.dbo;
 
-import com.example.webscraping.model.enums.SiteName;
+import com.example.webscraping.model.enums.Source;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,5 +31,5 @@ public class CarDbo {
     private String url;
     private String unitOfMillage;
     @Enumerated(EnumType.STRING)
-    private SiteName siteName;
+    private Source source;
 }
