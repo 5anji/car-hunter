@@ -37,6 +37,6 @@ RUN /etc/init.d/postgresql restart && mvn clean install
 USER ${UNAME}
 WORKDIR /tmp/car-hunter/src/api/target
 EXPOSE 8000-8089
-
+# /etc/init.d/postgresql restart && java -jar web-scraping-0.0.1-SNAPSHOT.jar
 # WORKDIR ${UHOME}
 CMD /bin/bash -l

@@ -128,13 +128,11 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - page
-                - per-page
               properties:
                 # pagination
                 page:
                   type: integer
+                  default: 1
                   example: 3
                   description: The number of page
                 per-page:
@@ -159,10 +157,10 @@ paths:
                 sort-by:
                   type: string
                   enum:
-                    - auction-date
-                    - registration-date
-                  default: auction-date
-                  example: auction-date
+                    - auctionDate
+                    - registrationDate
+                  default: auctionDate
+                  example: auctionDate
                   description: Select what to be sorted
                 # filters
                 source-list:
@@ -174,7 +172,8 @@ paths:
                       - bca-europe.com
                       # - 3rd_site.com
                       # - 4th_site.com
-                    example: [autobid.de, bca-europe.com]
+                  default: (all)
+                  example: [autobid.de, bca-europe.com]
                   description: Array of strings that represents the include list of which sites must be searched
                 price-min:
                   type: integer
@@ -262,7 +261,7 @@ paths:
           schema:
             type: integer
             format: uint64
-            example: 2
+          example: 2
       responses:
         "200":
           description: OK
@@ -298,9 +297,9 @@ components:
           example: 11
         auction-date:
           type: string
-          description: Date returned in following format DD MMM YYYY hh:mm
-          pattern: ^(\d{2})\s([A-Za-z]{3})\s(\d{4})\s(\d{2}:\d{2})$
-          example: 18 Oct 2023 14:30
+          format: date-time
+          description: Date returned in ISO8601 format
+          example: 2023-10-27T14:00:00Z
     VehicleExt:
       type: object
       description: Schema of vehicle used in advanced view page
@@ -331,9 +330,9 @@ components:
           example: Van
         registration-date:
           type: string
-          description: Date returned in following format MMM YYYY
-          pattern: ^([A-Za-z]{3})\s(\d{4})$
-          example: Aug 2021
+          format: date
+          description: Date returned in following format YYYY-MM
+          example: 2021-07
         mileage:
           type: integer
           description: Dimension unit is KM
@@ -354,9 +353,9 @@ components:
           example: http://example.com
         auction-date:
           type: string
-          description: Date returned in following format DD MMM YYYY hh:mm
-          pattern: ^(\d{2})\s([A-Za-z]{3})\s(\d{4})\s(\d{2}:\d{2})$
-          example: 18 Oct 2023 14:30
+          format: date-time
+          description: Date returned in ISO8601 format
+          example: 2023-10-27T14:00:00Z
   securitySchemes:
     bearerAuth:
       description: Security schema used for login/logout system
