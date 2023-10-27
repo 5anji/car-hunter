@@ -28,7 +28,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Page<CarResponseDto> getCarByTitle(FilteredCarsByTitleRequest filter) {
-        List<CarResponseDto> carResponseDtos = carRepository.findCarByTitle(filter.getTitle(),
+        List<CarResponseDto> carResponseDtos = carRepository.findCarByTitle("%" + filter.getTitle() + "%",
                         PageRequest.of(filter.getPage(), filter.getPerPage(),
                                 Sort.by(filter.getType(), filter.getField())),
                         filter.getMinPrice(), filter.getMaxPrice(),

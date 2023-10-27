@@ -10,7 +10,8 @@ import org.springframework.data.domain.Sort;
 @Getter
 @Setter
 public class FilteredCarsByTitleRequest {
-    private String title;
+    @Builder.Default
+    private String title = "";
     @Builder.Default
     private Integer page = 0;
     @Builder.Default
@@ -28,7 +29,7 @@ public class FilteredCarsByTitleRequest {
     @Builder.Default
     private Double maxDisplacement = Double.MAX_VALUE;
     @Builder.Default
-    private String field = "c.auction_date";
+    private String field = "auctionDate";
     @Builder.Default
     private SiteName siteName = SiteName.AUTOBID;
     @Builder.Default

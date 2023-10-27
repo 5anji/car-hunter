@@ -15,9 +15,21 @@ public interface CarRepository extends JpaRepository<CarDbo, Long> {
             "WHERE c.price BETWEEN :priceMin AND :priceMax AND " +
             "c.millage BETWEEN :millageMin AND :millageMax AND " +
             "c.displacement BETWEEN :displacementMin AND :displacementMax AND " +
-            "c.title LIKE '%' + :title + '%'")
+            "c.title LIKE :title")
     Page<CarDbo> findCarByTitle(@Param("title")String title, Pageable pageable,
                                 @Param("priceMin")Integer priceMin, @Param("priceMax")Integer priceMax,
                                 @Param("millageMin")Integer millageMin, @Param("millageMax")Integer millageMax,
                                 @Param("displacementMin")Double displacementMin, @Param("displacementMax")Double displacementMax);
+
+
+//    @Query(value = "SELECT c " +
+//            "FROM car_dbo c " +
+//            "WHERE c.price BETWEEN (:priceMin) AND (:priceMax) " +
+//            "  AND c.millage BETWEEN (:millageMin) AND (:millageMax) " +
+//            "  AND c.displacement BETWEEN (:displacementMin) AND (:displacementMax) " +
+//            "  AND c.title LIKE '%' + (:title) + '%'", nativeQuery = true)
+//    Page<CarDbo> findCarByTitle(@Param("title")String title, Pageable pageable,
+//                                @Param("priceMin")Integer priceMin, @Param("priceMax")Integer priceMax,
+//                                @Param("millageMin")Integer millageMin, @Param("millageMax")Integer millageMax,
+//                                @Param("displacementMin")Double displacementMin, @Param("displacementMax")Double displacementMax);
 }

@@ -138,7 +138,7 @@ public class SaveCarServiceImpl implements SaveCarService {
 
         //working code to save only the second day cars into db
         auctionIdList.forEach(idList -> {
-                    String attribute = idList.get(1);
+                    String attribute = idList.get(2);
                     page.navigate("https://autobid.de/?action=car&show=next&auction=" + attribute);
                     page.waitForLoadState(LoadState.NETWORKIDLE);
                     String hrefToScrapePage = page.querySelector(".js_popup_window").getAttribute("href");
@@ -149,14 +149,17 @@ public class SaveCarServiceImpl implements SaveCarService {
         );
 
         //code to test scraping
-//        page.navigate("https://autobid.de/?action=car&show=details&id=2570420");
-//        page.waitForLoadState(LoadState.NETWORKIDLE);
-//        String hrefToScrapePage = page.querySelector(".js_popup_window").getAttribute("href");
-//        page.navigate("https://autobid.de/" + hrefToScrapePage);
-//        page.waitForLoadState(LoadState.NETWORKIDLE);
-//        String currentPageUrl = "https://autobid.de/?action=car&show=details&id=2558857";
-//        page.navigate(currentPageUrl);
+//        page.navigate("https://autobid.de/?action=car&show=details&id=2575942");
+//                page.waitForLoadState(LoadState.NETWORKIDLE);
+//                String hrefToScrapePage = page.querySelector(".js_popup_window").getAttribute("href");
+//                page.navigate("https://autobid.de/" + hrefToScrapePage);
+//                page.waitForLoadState(LoadState.NETWORKIDLE);
+//                String currentPageUrl = "https://autobid.de/?action=car&show=details&id=2558857";
+////                page.navigate(currentPageUrl);
+//        String displacement = getDisplacement(page);
+//        double v = Double.parseDouble(displacement);
 //        System.out.println();
+
     }
 
     private void saveEveryCarByAuction(Page page, String hrefToScrapePage) {
@@ -255,7 +258,7 @@ public class SaveCarServiceImpl implements SaveCarService {
     private static Double getDisplacement(Page page) {
         Double displacement = 0.0;
         try {
-            Double.parseDouble(page.querySelector(".d_s_det").innerText().split("\n")[1].split(" ")[0]);
+            displacement = Double.parseDouble(page.querySelector(".d_s_det").innerText().split("\n")[1].split(" ")[0]);
         } catch (NumberFormatException e) {
             displacement = 0.0;
         }
@@ -287,6 +290,7 @@ public class SaveCarServiceImpl implements SaveCarService {
                 .title(carDto.getTitle())
                 .url(carDto.getUrl())
                 .unitOfMillage(carDto.getUnitOfMillage())
+                .siteName(carDto.getSiteName())
                 .build());
     }
 
