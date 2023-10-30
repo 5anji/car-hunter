@@ -23,5 +23,5 @@ public interface CarRepository extends JpaRepository<CarDbo, Long> {
                                 @Param("priceMin") Integer priceMin, @Param("priceMax") Integer priceMax,
                                 @Param("millageMin") Integer millageMin, @Param("millageMax") Integer millageMax,
                                 @Param("displacementMin") Double displacementMin, @Param("displacementMax") Double displacementMax,
-                                @Param("sourceList") List<String> sourceList);
+                                @Param("sourceList") List<Source> sourceList);
 }

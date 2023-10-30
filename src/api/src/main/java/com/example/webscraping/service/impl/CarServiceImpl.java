@@ -33,13 +33,13 @@ public class CarServiceImpl implements CarService {
                         filter.getPriceMin(), filter.getPriceMax(),
                         filter.getMillageMin(), filter.getMillageMax(),
                         filter.getDisplacementMin(), filter.getDisplacementMax(),
-                        filter.getSourceList().stream().map(s -> ))
-                .map(CarServiceImpl::convertFromDboIntoDto)
+                        filter.getSourceList())
+                .map(this::convertFromDboIntoDto)
                 .toList();
         return new PageImpl<>(carResponseDtos);
     }
 
-    private static CarResponseDto convertFromDboIntoDto(CarDbo carDbo) {
+    private CarResponseDto convertFromDboIntoDto(CarDbo carDbo) {
         return CarResponseDto.builder()
                 .title(carDbo.getTitle())
                 .unitOfMillage(carDbo.getUnitOfMillage())

@@ -34,8 +34,7 @@ public class FilteredCarsByTitleRequest {
     private Double displacementMin = 0.0;
     @Builder.Default
     private Double displacementMax = Double.MAX_VALUE;
-    @Builder.Default
-    private List<String> sourceList = Collections.emptyList();
+    private List<Source> sourceList;
     @Builder.Default
     private String sortBy = "auctionDate";
     @Builder.Default
