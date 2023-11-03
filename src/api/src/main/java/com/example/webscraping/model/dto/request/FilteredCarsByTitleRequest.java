@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import java.util.Collections;
 import java.util.List;
 
+import static com.example.webscraping.model.enums.Source.AUTOBID;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,7 +36,8 @@ public class FilteredCarsByTitleRequest {
     private Double displacementMin = 0.0;
     @Builder.Default
     private Double displacementMax = Double.MAX_VALUE;
-    private List<Source> sourceList;
+    @Builder.Default
+    private List<Source> sourceList = List.of(AUTOBID);
     @Builder.Default
     private String sortBy = "auctionDate";
     @Builder.Default
