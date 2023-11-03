@@ -1,5 +1,5 @@
 website:
-  urls: https://ikman.lk/en/ads/sri-lanka/vehicles?sort=relevance&buy_now=0&urgent=0&query=,https://riyasewana.com/search/,https://autobid.de/?action=auctions
+  urls: https://autobid.de/?action=auctions
 
 
 spring:
@@ -11,7 +11,7 @@ spring:
 
   jpa:
     show-sql: true
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
 

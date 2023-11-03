@@ -1,35 +1,31 @@
-package com.example.webscraping.model.dbo;
+package com.example.webscraping.model.dto.response;
 
 import com.example.webscraping.model.enums.Source;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class CarDbo {
-    @Id
-    @GeneratedValue
-    private Long id;
+@JsonNaming(PropertyNamingStrategies.KebabCaseStrategy.class)
+public class CarResponseDto {
     private String bodyType;
     private String title;
     private YearMonth registrationDate;
     private Integer millage;
     private Double displacement;
-    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> photoUrls;
     private String gearBox;
     private Integer price;
     private ZonedDateTime auctionDate;
     private String url;
     private String unitOfMillage;
-    @Enumerated(EnumType.STRING)
     private Source source;
 }
