@@ -8,6 +8,7 @@ import com.example.webscraping.service.SaveCarService;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,6 +30,7 @@ public class SaveCarServiceImpl implements SaveCarService {
     List<String> urls;
 
     @Override
+    @SneakyThrows
     public void saveVehicles() {
         for (String url : urls) {
             getVehicleByModelFromAutobid(url, Map.of("X-POWERED-BY", "Spring Framework 6"));
