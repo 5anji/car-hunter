@@ -26,7 +26,7 @@ RUN apt-get install libatk1.0-0\
         libxrandr2\
         libgbm1\
         libpango-1.0-0\
-        libcairo2
+        libcairo2 -y
 
 RUN groupadd -g ${GID} ${GNAME} -f \
     && useradd -p '${UNAME}' -g ${GNAME} -u ${UID} ${UNAME} \
