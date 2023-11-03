@@ -208,6 +208,3 @@ public class ScraperServiceImpl implements ScraperService {
     }
 
 }
-
-
-
