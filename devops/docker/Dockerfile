@@ -15,6 +15,18 @@ RUN apt-get install bash-completion -y
 RUN apt-get install nginx -y
 RUN apt-get install openjdk-17-jre-headless -y
 RUN apt-get install maven -y
+RUN apt-get install libatk1.0-0\
+        libatk-bridge2.0-0\
+        libdrm2\
+        libxkbcommon0\
+        libatspi2.0-0\
+        libxcomposite1\
+        libxdamage1\
+        libxfixes3\
+        libxrandr2\
+        libgbm1\
+        libpango-1.0-0\
+        libcairo2
 
 RUN groupadd -g ${GID} ${GNAME} -f \
     && useradd -p '${UNAME}' -g ${GNAME} -u ${UID} ${UNAME} \

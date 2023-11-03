@@ -53,9 +53,7 @@ case ${COMMAND} in
                            -h ${CONTAINER_NAME} \
                            --user ${USER} \
                            -v /home/${USER}:/home/${USER} \
-                           -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) \
                            -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-                           -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
                            -e DISPLAY -e "QT_X11_NO_MITSHM=1" \
                            -e POSTGRES_PASSWORD=postgres \
                            -e SERVER_PORT=8081 \
