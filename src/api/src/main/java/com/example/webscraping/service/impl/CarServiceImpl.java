@@ -32,7 +32,7 @@ public class CarServiceImpl implements CarService {
                                 Sort.by(filter.getSort(), filter.getSortBy())),
                         filter.getPriceMin(), filter.getPriceMax(),
                         filter.getMillageMin(), filter.getMillageMax(),
-                        filter.getDisplacementMin(), filter.getDisplacementMax(),
+                        filter.getDisMin(), filter.getDisMax(),
                         filter.getSourceList())
                 .map(this::convertFromDboIntoDto)
                 .toList();
@@ -43,7 +43,7 @@ public class CarServiceImpl implements CarService {
         return CarResponseDto.builder()
                 .title(carDbo.getTitle())
                 .unitOfMillage(carDbo.getUnitOfMillage())
-                .millage(carDbo.getMillage())
+                .millage((carDbo.getUnitOfMillage().equals("Kilometres")) ? carDbo.getMillage() : (int) (carDbo.getMillage() * 1.60934))
                 .url(carDbo.getUrl())
                 .price(carDbo.getPrice())
                 .registrationDate(carDbo.getRegistrationDate())

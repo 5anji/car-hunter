@@ -10,6 +10,7 @@ import com.microsoft.playwright.options.LoadState;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -31,6 +32,7 @@ public class SaveCarServiceImpl implements SaveCarService {
 
     @Override
     @SneakyThrows
+    @Scheduled(cron = "0 0 1 * * *")
     public void saveVehicles() {
         for (String url : urls) {
             getVehicleByModelFromAutobid(url, Map.of("X-POWERED-BY", "Spring Framework 6"));
@@ -38,26 +40,6 @@ public class SaveCarServiceImpl implements SaveCarService {
     }
 
     public void getVehicleByModelFromAutobid(String url, @RequestHeader Map<String, String> header) {
-//        String apiKey = "b84fea938e623916c18c199a04817b5c";
-//        String scrapedUrl = "http://api.scraperapi.com?api_key=" + apiKey + "&url=" + url + "&keep_headers=true&country_code=us";
-//        URL url1 = new URL(scrapedUrl);
-//        HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
-//        httpURLConnection.setRequestProperty("Content-Type", "application/json");
-//        httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0"); //make rotation
-//        httpURLConnection.setRequestProperty("X-MyHeader", "123");
-//        httpURLConnection.setRequestProperty("Referer", "https://www.google.com/");// referer
-//        httpURLConnection.setRequestMethod("GET");
-//        Document document = Optional.of(Jsoup.connect(scrapedUrl).get()).orElseThrow(IOException::new);
-//        Element element = Optional.ofNullable(document.getElementById("p")).orElseThrow();
-//        Elements elements1 = Optional.of(document.select("div.csc-default")).orElseThrow();
-//        Element elements2 = Optional.ofNullable(document.getElementById("placeholder_content")).orElseThrow();
-//        Elements elements3 = Optional.of(document.select("div.ui-tabs.ui-widget.ui-widget-content.ui-corner-all")).orElseThrow();
-//        Evaluator evaluator = new Evaluator.Class("auctionType_t atc_4");
-//        Elements elements5 = Optional.of(document.select("div[class='auctionType_t atc_4']")).orElseThrow();
-
-
-//        Elements elements6 = Optional.of(document.getElementsByClass("auctionType_t atc_4")).orElseThrow();
-
         Playwright playwright = Playwright.create();
         Browser browser = playwright.chromium().launch();
         BrowserContext context = browser.newContext(new Browser.NewContextOptions()
@@ -238,7 +220,7 @@ public class SaveCarServiceImpl implements SaveCarService {
 
     private void saveCar(CarRequestDto carDto) {
         carRepository.save(CarDbo.builder()
-                .auctionDate(carDto.getAuctionDate())//check
+                .auctionDate(carDto.getAuctionDate())
                 .bodyType(carDto.getBodyType())
                 .registrationDate(carDto.getRegistrationDate())
                 .displacement(carDto.getDisplacement())
@@ -252,6 +234,10 @@ public class SaveCarServiceImpl implements SaveCarService {
                 .source(carDto.getSource())
                 .build());
     }
+
+    private void deleteCars(){
+    }
+
 
 }
 
