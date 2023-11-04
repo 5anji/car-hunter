@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.springframework.data.domain.Sort;
 
-import java.util.Collections;
 import java.util.List;
 
 import static com.example.webscraping.model.enums.Source.AUTOBID;
@@ -33,9 +32,9 @@ public class FilteredCarsByTitleRequest {
     @Builder.Default
     private Integer millageMax = Integer.MAX_VALUE;
     @Builder.Default
-    private Double displacementMin = 0.0;
+    private Double disMin = 0.0;
     @Builder.Default
-    private Double displacementMax = Double.MAX_VALUE;
+    private Double disMax = Double.MAX_VALUE;
     @Builder.Default
     private List<Source> sourceList = List.of(AUTOBID);
     @Builder.Default
