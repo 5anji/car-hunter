@@ -33,15 +33,8 @@ CONTAINER_NAME=car-hunter:debian12
 CONTAINER=postgres:bookworm
 case ${COMMAND} in
     build)
-        GNAME=`id -g -n`
-        GID=`id -g`
         docker pull ${CONTAINER}
         docker build \
-               --build-arg=UNAME=${USER} \
-               --build-arg=UID=${UID} \
-               --build-arg=GNAME=${GNAME} \
-               --build-arg=GID=${GID} \
-               --build-arg=UHOME=${HOME} \
                -t ${CONTAINER_NAME} \
                -f ${DOCKERFILE} .
         ;;
@@ -51,26 +44,23 @@ case ${COMMAND} in
         CONTAINER=$(docker run \
                            --rm -d -P -it \
                            -h ${CONTAINER_NAME} \
-                           --user ${USER} \
-                           -v /home/${USER}:/home/${USER} \
-                           -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-                           -e DISPLAY -e "QT_X11_NO_MITSHM=1" \
                            -e POSTGRES_PASSWORD=postgres \
                            -e SERVER_PORT=8081 \
                            -p 8081:8081 \
-                           --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-                           --device=/dev/net/tun --sysctl="net.ipv6.conf.default.disable_ipv6=0" \
-                           --privileged \
-                           --shm-size="1g" \
                            --hostname=${CONTAINER_NAME} \
                            --name dev-container \
                            ${CONTAINER_NAME} \
                  )
+
         if [ -z $CONTAINER ]; then
             error_echo "Container ${CONTAINER_NAME} start failed"
             exit 1
         else
-            docker exec -it dev-container bash -l
+            if [ "$OSTYPE" == "msys" ]; then
+                winpty docker exec -it dev-container bash -l
+            else
+                docker exec -it dev-container bash -l
+            fi
         fi
         ;;
     *)
