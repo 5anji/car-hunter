@@ -41,6 +41,7 @@ public class CarServiceImpl implements CarService {
 
     private CarResponseDto convertFromDboIntoDto(CarDbo carDbo) {
         return CarResponseDto.builder()
+                .id(carDbo.getId())
                 .title(carDbo.getTitle())
                 .unitOfMillage(carDbo.getUnitOfMillage())
                 .millage((carDbo.getUnitOfMillage().equals("Kilometres")) ? carDbo.getMillage() : (int) (carDbo.getMillage() * 1.60934))

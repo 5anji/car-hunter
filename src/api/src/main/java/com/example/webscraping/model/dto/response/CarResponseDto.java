@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 @JsonNaming(PropertyNamingStrategies.KebabCaseStrategy.class)
 public class CarResponseDto {
+    private Long id;
     private String bodyType;
     private String title;
     private YearMonth registrationDate;

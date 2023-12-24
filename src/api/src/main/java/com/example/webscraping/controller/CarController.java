@@ -19,7 +19,7 @@ public class CarController {
         return carService.getCarById(id);
     }
 
-    @GetMapping
+    @PostMapping
     public Page<CarResponseDto> getCarByName(@RequestBody FilteredCarsByTitleRequest filteredCarsByTitleRequest) {
         return carService.getCarByTitle(filteredCarsByTitleRequest);
     }
