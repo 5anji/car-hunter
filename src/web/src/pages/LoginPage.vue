@@ -123,9 +123,11 @@ async function loginFunction() {
        token.value = data["access-token"];
        localStorage.setItem( 'token', JSON.stringify(token) );
        console.log('Token:', token.value);
+       await router.push({name: 'home'})
     }
   } catch (error) {
     console.error("Error:", error);
+    alert('Something went wrong');
   }
 }
 

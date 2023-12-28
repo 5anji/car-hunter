@@ -2,7 +2,7 @@
 <div class="carObject" @click="onView(id)">
   <img
       class="car__image"
-      :src="img1"
+      :src="image"
       alt="Image"
   />
   <div class="miniTitle name">{{ name }}</div>
@@ -25,6 +25,10 @@ const props = defineProps({
   price: {
     type: Number,
     default: 100
+  },
+  image: {
+    type: String,
+    default: ""
   }
 });
 
@@ -37,7 +41,7 @@ function onView(id) {
 .carObject{
   margin: 0 auto;
   width: 100%;
-  height: fit-content;
+  height: 300px;
   max-width: 18rem;
   background-color: var(--semiblue);
   border-radius: 0.63rem;

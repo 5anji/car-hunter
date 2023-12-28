@@ -155,6 +155,7 @@ async function Data() {
     }
   } catch (error) {
     console.error("Error:", error);
+    alert('Something went wrong');
   }
 }
 </script>

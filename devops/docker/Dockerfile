@@ -30,6 +30,7 @@ RUN pg_createcluster 16 main_cluster \
     && psql -c 'CREATE DATABASE test'
 
 USER root
+ARG v=1
 WORKDIR /tmp
 RUN git clone https://github.com/5anji/car-hunter.git
 WORKDIR /tmp/car-hunter/src/api

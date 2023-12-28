@@ -1,47 +1,48 @@
 <template>
-<div class="someObjects" v-if="newObj">
-  <div class="title">The most popular cars</div>
-  <div class="someCars">
-    <img
-        :src="arrow"
-        alt="Image"
-        class="leftArrow"
-        @click="minusMiniPage"
-    />
-
-    <div class="bestCars"
-         v-for="item in newObj[index]"
-         :key="item.id"
-    >
-      <Transition name="fade" mode="out-in">
-      <CarObject
-          :id="item.id"
-          :key="item.id"
-          :name="item.title"
-          :price="item.price"
+  <div class="someObjects" v-if="newObj">
+    <div class="title">The most popular cars</div>
+    <div class="someCars">
+      <img
+          :src="arrow"
+          alt="Image"
+          class="leftArrow"
+          @click="minusMiniPage"
       />
-      </Transition>
+
+      <div class="bestCars"
+           v-for="item in newObj[index]"
+           :key="item.id"
+      >
+        <Transition name="fade" mode="out-in">
+          <CarObject
+              :id="item.id"
+              :key="item.id"
+              :price="item.price"
+              :name="item.title"
+              :image="item['photo-urls'][1]"
+          />
+        </Transition>
+      </div>
+      <img
+          :src="arrow"
+          alt="Image"
+          class="rightArrow"
+          @click="plusMiniPage"
+      />
     </div>
-    <img
-        :src="arrow"
-        alt="Image"
-        class="rightArrow"
-        @click="plusMiniPage"
-    />
+    <div class="pagination">
+      <div
+          class="circle"
+          :class="{ activeCircle: idx === index }"
+          v-for="(car, idx) in newObj"
+          :key="idx"
+          @click="changeCarousel(idx)"
+      ></div>
+    </div>
+    <div class="findMoreButton">
+      <ButtonCustom @click="findMore"/>
+    </div>
   </div>
-  <div class="pagination">
-    <div
-        class="circle"
-        :class="{ activeCircle: idx === index }"
-        v-for="(car, idx) in newObj"
-        :key="idx"
-        @click="changeCarousel(idx)"
-    ></div>
-  </div>
-  <div class="findMoreButton">
-  <ButtonCustom @click="findMore"/>
-  </div>
-</div>
 </template>
 
 <script setup>
@@ -54,41 +55,67 @@ import router from "@/main";
 function findMore() {
   router.push({name: 'filter'})
 }
+
 const data = ref([]);
 let newObj = ref([]);
 let index = ref(0);
-const fetchData = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/vehicles');
-    data.value = await response.json();
-    let size = 4;
-    data.value.reduce((acc, curr, i) => { if ( !(i % size) ) {
-      newObj.value.push(data.value.slice(i, i + size));
-    } return newObj;
-      }, []);
-  } catch (error) {
-    console.error('Error fetching data:', error);
+let imgArr = [];
+
+async function fetchData() {
+
+  let postData = {
+    page: 1,
   }
-};
+  let postDataNew = JSON.stringify(postData);
+
+  console.log(postData);
+  console.log(JSON.stringify(postData));
+  try {
+    const response = await fetch("http://localhost:8081/api/vehicle", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: postDataNew,
+    });
+    data.value = await response.json();
+    let arrData = data.value.content;
+    let size = 4;
+    arrData.reduce((acc, curr, i) => {
+      if (!(i % size)) {
+        newObj.value.push(arrData.slice(i, i + size));
+      }
+      return newObj;
+    }, []);
+    console.log(data.value.content);
+    console.log(newObj);
+    console.log(imgArr);
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 
 onMounted(fetchData);
 
 function plusMiniPage() {
-  if(index.value === newObj.value.length - 1) {
+  if (index.value === newObj.value.length - 1) {
     index.value = 0;
   } else {
     index.value = index.value + 1;
   }
   console.log(index.value);
 }
+
 function minusMiniPage() {
-  if(index.value === 0) {
+  if (index.value === 0) {
     index.value = newObj.value.length - 1;
   } else {
     index.value = index.value - 1;
   }
   console.log(index.value);
 }
+
 const changeCarousel = (newIndex) => {
   index.value = newIndex;
 };
@@ -111,6 +138,7 @@ const changeCarousel = (newIndex) => {
       height: 1.5rem;
       cursor: pointer;
     }
+
     .rightArrow {
       rotate: -90deg;
       width: 1.5rem;
@@ -140,9 +168,11 @@ const changeCarousel = (newIndex) => {
     margin: 0 auto;
   }
 }
+
 .activeCircle {
   background-color: var(--white);
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;
